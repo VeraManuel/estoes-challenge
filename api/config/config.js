@@ -17,10 +17,7 @@ module.exports = {
     dialect: "mysql",
   },
   production: {
-    username: config.database.username,
-    password: config.database.password,
-    database: config.database.database,
-    host: config.database.host,
+    use_env_variable: "JAWSDB_URL",
     dialect: "mysql",
   },
 };

@@ -24,7 +24,7 @@ const getAll = async (name) => {
   let condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
 
   try {
-    const projects = await Project.findAll({ where: condition });
+    const projects = await Project.findAll({ where: condition, include: db.User });
 
     return projects;
   } catch (err) {

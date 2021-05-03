@@ -19,15 +19,15 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
         references: {
           model: "Users",
           key: "id",
+          as: "userId",
         },
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
       },
-      deletedAt: {
-        type: Sequelize.DATE,
+      status: {
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,

@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
-const swaggerUi = require("swagger-ui-express");
+const cors = require("cors");
 const config = require("../../config");
+const projectRoute = require("../../routes/projects");
 const userRoute = require("../../routes/users");
 const logger = require("../logger");
 
@@ -9,19 +10,21 @@ class ExpressServer {
   constructor() {
     this.app = express();
     this.port = config.port;
-    this.basePath = config.api.prefix;
+    this.basePathProjects = config.api.prefix + "/projects";
+    this.basePathUsers = config.api.prefix + "/users";
 
     this._middlewares();
 
     this._routes();
-    this._swaggerConfig();
 
     this._notFound();
     this._errorHandler();
   }
 
   _middlewares() {
+    this.app.use(cors());
     this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
     this.app.use(morgan("tiny"));
   }
 
@@ -30,7 +33,8 @@ class ExpressServer {
       res.status(200).end();
     });
 
-    this.app.use(`${this.basePath}/users`, userRoute);
+    this.app.use(`${this.basePathProjects}`, projectRoute);
+    this.app.use(`${this.basePathUsers}`, userRoute);
   }
 
   _notFound() {
@@ -42,26 +46,19 @@ class ExpressServer {
   }
 
   _errorHandler() {
-    this.app.use((error, req, res, next) => {
-      const code = error.code || 500;
-      res.status(code);
+    this.app.use((err, req, res, next) => {
+      const code = err.code || 500;
+
       const body = {
         error: {
           code,
-          message: error.message,
+          message: err.message,
+          detail: err.data,
         },
       };
 
-      res.json(body);
+      res.status(code).json(body);
     });
-  }
-
-  _swaggerConfig() {
-    this.app.use(
-      config.swagger.path,
-      swaggerUi.serve,
-      swaggerUi.setup(require("../swagger/swagger.json"))
-    );
   }
 
   async start() {

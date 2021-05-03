@@ -1,6 +1,6 @@
 {
   "name": "estoes-api",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "apirest",
   "main": "index.js",
   "scripts": {
